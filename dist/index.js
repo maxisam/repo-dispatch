@@ -223,7 +223,6 @@ var INPUTS;
     INPUTS["authToken"] = "authToken";
     INPUTS["owner"] = "owner";
     INPUTS["repository"] = "repository";
-    //   description = 'description',
     INPUTS["eventType"] = "eventType";
     INPUTS["clientPayload"] = "clientPayload";
 })(INPUTS = exports.INPUTS || (exports.INPUTS = {}));
