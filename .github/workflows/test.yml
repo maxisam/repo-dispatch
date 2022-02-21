@@ -1,0 +1,24 @@
+name: "🙈 test"
+
+on:
+  repository_dispatch:
+    types:
+      - test-repo-dispatch
+
+jobs:
+  test: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          PR_BODY="${{ github.event.client_payload.message }}"
+          gh release create "test" \
+            --target main \
+            --notes "${PR_BODY}" \
+            --title "${{ github.event.client_payload.subject }}"
