@@ -1,7 +1,20 @@
+import * as core from '@actions/core';
 import {RequestParameters} from '@octokit/types';
-
+import * as jsYaml from 'js-yaml';
 export interface IClinetPayload {
   [key: string]: unknown;
+}
+
+export function parseClientPayload(clientPayloadString: string): IClinetPayload {
+  let clientPayload: IClinetPayload = {};
+  try {
+    clientPayload = jsYaml.load(clientPayloadString, {json: true}) as IClinetPayload;
+  } catch (error) {
+    if (error instanceof jsYaml.YAMLException) {
+      core.setFailed(`Error parsing client payload:\n${error.message}`);
+    }
+  }
+  return clientPayload;
 }
 
 export type DispatchEventRequest = RequestParameters &
@@ -21,11 +34,10 @@ export type DispatchEventRequest = RequestParameters &
   >;
 
 export function createDispatchEventRequest(owner: string, repo: string, eventType: string, clientPayloadString: string): DispatchEventRequest {
-  const clientPayload: IClinetPayload = JSON.parse(clientPayloadString);
   return {
     owner,
     repo,
     event_type: eventType,
-    client_payload: clientPayload
+    client_payload: parseClientPayload(clientPayloadString)
   };
 }

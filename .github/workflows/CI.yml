@@ -1,0 +1,64 @@
+name: '🌞 CI'
+
+on:
+  workflow_dispatch:  
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - dist/**
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - dist/**
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+
+      - run: yarn install
+
+      - run: yarn all
+
+      - name: Compare the expected and actual dist/ directories
+        id: diff
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build.  See status below:"
+            git diff
+            echo "::set-output name=diff::true"
+          fi
+
+      - name: commit build
+        if: ${{ steps.diff.outputs.diff }}
+        run: |
+          git config --local user.email "maxisam@gmail.com"
+          git config --local user.name "maxisam"
+          git add dist/
+          git commit -m "chore: build, dist updated"
+          git push origin ${{ github.ref_name }}
+  check:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: always()
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          eventType: "test-repo-dispatch"
+          clientPayload: |
+            message: |
+              🚀 Works
+              - test 1
+              - test 2
+            subject: 💥Title

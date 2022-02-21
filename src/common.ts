@@ -23,7 +23,7 @@ export function getOwnerRepo(owner: string, repository: string): [string, string
   return [owner, repository];
 }
 
-export function getOctokit(authToken: string, userAgent: string = 'github-action'): Octokit | null {
+export function getOctokit(authToken: string, userAgent = 'github-action'): Octokit | null {
   let octokit: Octokit | null = null;
 
   try {

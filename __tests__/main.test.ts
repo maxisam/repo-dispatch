@@ -2,13 +2,16 @@
 // import * as cp from 'child_process'
 // import * as path from 'path'
 import {expect, test} from '@jest/globals';
-import {createDispatchEventRequest} from '../src/create-dispatch';
+import {createDispatchEventRequest, parseClientPayload} from '../src/create-dispatch';
 
 const mockInputs = {
   owner: 'owner',
   repository: 'repository',
   eventType: 'eventType',
-  clientPayload: '{"key":"value"}'
+  clientPayload: `
+  key1: value1
+  key2: value2
+  `
 };
 
 test('create dispatch request', async () => {
@@ -16,7 +19,13 @@ test('create dispatch request', async () => {
     owner: mockInputs.owner,
     repo: mockInputs.repository,
     event_type: mockInputs.eventType,
-    client_payload: JSON.parse(mockInputs.clientPayload)
+    client_payload: parseClientPayload(mockInputs.clientPayload)
+  });
+});
+test('parse client payload', async () => {
+  await expect(parseClientPayload(mockInputs.clientPayload)).toStrictEqual({
+    key1: 'value1',
+    key2: 'value2'
   });
 });
 // // shows how the runner will run a javascript action with env / stdout protocol

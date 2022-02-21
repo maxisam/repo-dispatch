@@ -1,11 +1,29 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Repo Dispatch Yaml Input'
+description: 'Yet another repo dispatch. But with yaml as clientPayload input'
+author: 'maxisam'
+branding:
+  icon: check
+  color: yellow
 inputs:
-  milliseconds: # change this
-    required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  authToken:
+    description: 'Use secrets.GITHUB_TOKEN or your own token if you need to trigger other workflows'
+    required: true  
+  owner:
+    description: 'Repostory owner, defaults to context github.repository_owner if omited'
+    default: ${{ github.repository_owner }}
+    required: false
+  repository:
+    description: 'Repository, default to context github.repository if omited'
+    default: ${{ github.repository }}
+    required: false
+  eventType:
+    description: 'eventType'
+    default: 'repo-dispatch'
+    required: false
+  clientPayload: 
+    description: 'clientPayload in yaml'
+    default: ''
+    required: false
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
