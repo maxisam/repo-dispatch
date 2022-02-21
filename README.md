@@ -1,105 +1,62 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+[![🌞 CI](https://github.com/maxisam/repo-dispatch/actions/workflows/CI.yml/badge.svg)](https://github.com/maxisam/repo-dispatch/actions/workflows/CI.yml)
 
-# Create a JavaScript Action using TypeScript
+# Yet Another Repo Dispatch Github Action
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+There are lots of Github action to do repo dispatch, however, none of them (or I didn't look hard enough) handle the clientPayload the way I want.
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+So here it is. It allows you to compose your payload as yaml format (powered by [js-yaml](https://github.com/nodeca/js-yaml)) and take care the line break nicely.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+Check [Action tab](https://github.com/maxisam/repo-dispatch/actions/workflows/CI.yml) to see how it looks like in action.
 
-## Create an action from this template
-
-Click the `Use this Template` and provide the new repo details for your action
-
-## Code in Main
-
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
-
-Install the dependencies  
-```bash
-$ npm install
+```yml
+# https://github.com/maxisam/repo-dispatch/blob/main/.github/workflows/CI.yml
+- uses: maxisam/repo-dispatch@v1
+  with:
+    authToken: ${{secrets.GH_AUTH_TOKEN}}
+    eventType: 'test-repo-dispatch'
+    clientPayload: |
+      message: |
+        🚀 Works
+        - test 1
+        - test 2
+      subject: 💥Title
 ```
 
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
+```yml
+# https://github.com/maxisam/repo-dispatch/blob/main/.github/workflows/repo-dispatch.yml
+
+name: ci-test
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [test-repo-dispatch]
+
+jobs:
+  ci-test:
+    name: ci test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ github.event.client_payload.message }}"
 ```
 
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
+## Action inputs
 
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
+See https://github.com/maxisam/repo-dispatch/blob/main/action.yml
 
-...
+## Note
+
+### Token
+
+The default ${{ secrets.GITHUB_TOKEN }} doesn't work with repo-dispatch. You have to [create your own token](https://github.com/settings/tokens) with `repo` scope.
+
+### Client payload
+
+The GitHub API allows a maximum of 10 top-level properties in the `client-payload` JSON.
+If you use more than that you will see an error message like the following.
+
+```sh
+No more than 10 properties are allowed; 14 were supplied.
 ```
 
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
-
-```yaml
-uses: ./
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
-
-## Usage:
-
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+Additionally, there is a limitation on the total data size of the `client-payload`. A very large payload may result in a `client_payload is too large` error.

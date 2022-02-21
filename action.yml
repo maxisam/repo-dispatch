@@ -1,12 +1,12 @@
-name: 'Repo Dispatch Yaml Input'
+name: 'Repo Dispatch -- feat. Yaml ClientPayload'
 description: 'Yet another repo dispatch. But with yaml as clientPayload input'
 author: 'maxisam'
 branding:
-  icon: check
-  color: yellow
+  icon: send
+  color: purple
 inputs:
   authToken:
-    description: 'Use secrets.GITHUB_TOKEN or your own token if you need to trigger other workflows'
+    description: 'Use your own token if you need to trigger other workflows'
     required: true  
   owner:
     description: 'Repostory owner, defaults to context github.repository_owner if omited'
@@ -17,11 +17,11 @@ inputs:
     default: ${{ github.repository }}
     required: false
   eventType:
-    description: 'eventType'
+    description: 'eventType of repo dispatch'
     default: 'repo-dispatch'
     required: false
   clientPayload: 
-    description: 'clientPayload in yaml'
+    description: 'clientPayload in yaml format'
     default: ''
     required: false
 runs:

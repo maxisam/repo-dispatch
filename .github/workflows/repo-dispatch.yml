@@ -1,25 +1,23 @@
-name: ci-test
+name: REPO DISPATCH
 
 on:
-  workflow_dispatch:
   repository_dispatch:
     types: [test-repo-dispatch]
 
 jobs:
-  ci-test: 
-    name: ci test
+  repo-dispatch: 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Create Release
+      - name: Create Test Issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
         run: |
           BODY="${{ github.event.client_payload.message }}"
-          gh issue create \
+          ISSUE=$(gh issue create \
             --body "${BODY}" \
-            --title "${{ github.event.client_payload.subject }}"
+            --label ci-test \
+            --title "${{ github.event.client_payload.subject }}")
+          gh issue close $ISSUE
 
