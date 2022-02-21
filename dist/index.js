@@ -111,10 +111,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createDispatchEventRequest = exports.parseClientPayload = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const jsYaml = __importStar(__nccwpck_require__(1917));
+const util_1 = __nccwpck_require__(3837);
 function parseClientPayload(clientPayloadString) {
     let clientPayload = {};
     try {
         clientPayload = jsYaml.load(clientPayloadString, { json: true });
+        core.debug(`clientPayload: ${(0, util_1.inspect)(clientPayload)}`);
     }
     catch (error) {
         if (error instanceof jsYaml.YAMLException) {
@@ -183,6 +185,7 @@ function run() {
         let request;
         try {
             request = (0, create_dispatch_1.createDispatchEventRequest)(owner, repo, inputs.eventType, inputs.clientPayload);
+            core.debug(`dispatch event request: ${(0, util_1.inspect)(request)}`);
         }
         catch (error) {
             if (error instanceof Error) {

@@ -1,12 +1,13 @@
-name: "🙈 test"
+name: ci-test
 
 on:
+  workflow_dispatch:
   repository_dispatch:
-    types:
-      - test-repo-dispatch
+    types: [test-repo-dispatch]
 
 jobs:
-  test: 
+  ci-test: 
+    name: ci test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,8 +18,8 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
         run: |
-          PR_BODY="${{ github.event.client_payload.message }}"
-          gh release create "test" \
-            --target main \
-            --notes "${PR_BODY}" \
+          BODY="${{ github.event.client_payload.message }}"
+          gh issue create \
+            --body "${BODY}" \
             --title "${{ github.event.client_payload.subject }}"
+

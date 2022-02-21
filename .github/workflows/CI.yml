@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          authToken: ${{secrets.GITHUB_TOKEN}}
+          authToken: ${{secrets.GH_AUTH_TOKEN}}
           eventType: "test-repo-dispatch"
           clientPayload: |
             message: |

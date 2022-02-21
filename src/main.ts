@@ -11,6 +11,7 @@ async function run(): Promise<void> {
 
   try {
     request = createDispatchEventRequest(owner, repo, inputs.eventType, inputs.clientPayload);
+    core.debug(`dispatch event request: ${inspect(request)}`);
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(`Error creating status request object: ${error.message}`);
