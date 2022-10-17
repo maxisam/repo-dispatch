@@ -18,7 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+        with:
+          ref: ${{ github.head_ref || github.ref}}
+          
       - name: Set Node.js 16.x
         uses: actions/setup-node@v3
         with:
@@ -45,7 +47,7 @@ jobs:
           git config --local user.name "maxisam"
           git add dist/
           git commit -m "chore: build, dist updated"
-          git push origin ${{ github.ref_name }}
+          git push origin ${{ github.head_ref || github.ref_name }}
           
   repo-dispatch:
     runs-on: ubuntu-latest
