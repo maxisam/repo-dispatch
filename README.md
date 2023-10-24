@@ -6,6 +6,15 @@ There are lots of Github action to do repo dispatch, however, none of them (or I
 
 So here it is. It allows you to compose your payload as yaml format (powered by [js-yaml](https://github.com/nodeca/js-yaml)) and take care the line break nicely.
 
+## Features
+
+- Compose clientPayload as yaml format
+- Provide notice for triggered workflow
+
+<img width="403" alt="image" src="https://github.com/maxisam/repo-dispatch/assets/456807/53e07171-e7c7-419d-826f-4eb8678ce282">
+
+## Example
+
 Check [Action tab](https://github.com/maxisam/repo-dispatch/actions/workflows/CI.yml) to see how it looks like in action.
 
 ```yml
