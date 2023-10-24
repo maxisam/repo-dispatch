@@ -10,7 +10,7 @@ export function getInputs(): IInputs {
     owner: core.getInput(INPUTS.owner),
     repository: core.getInput(INPUTS.repository),
     eventType: core.getInput(INPUTS.eventType),
-    clientPayload: core.getInput(INPUTS.clientPayload),
+    clientPayload: core.getMultilineInput(INPUTS.clientPayload).join('\n'),
     targetWorkflowId: core.getInput(INPUTS.targetWorkflowId),
     triggeredWorkflowTitleKeyword: core.getInput(INPUTS.triggeredWorkflowTitleKeyword),
     trackTriggertedWorkflowMaxRetries: getNumberInput(INPUTS.trackTriggertedWorkflowMaxRetries),

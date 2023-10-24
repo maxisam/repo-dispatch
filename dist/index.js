@@ -42,7 +42,7 @@ function getInputs() {
         owner: core.getInput(modals_1.INPUTS.owner),
         repository: core.getInput(modals_1.INPUTS.repository),
         eventType: core.getInput(modals_1.INPUTS.eventType),
-        clientPayload: core.getInput(modals_1.INPUTS.clientPayload),
+        clientPayload: core.getMultilineInput(modals_1.INPUTS.clientPayload).join('\n'),
         targetWorkflowId: core.getInput(modals_1.INPUTS.targetWorkflowId),
         triggeredWorkflowTitleKeyword: core.getInput(modals_1.INPUTS.triggeredWorkflowTitleKeyword),
         trackTriggertedWorkflowMaxRetries: (0, utils_1.getNumberInput)(modals_1.INPUTS.trackTriggertedWorkflowMaxRetries),
