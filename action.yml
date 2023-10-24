@@ -32,6 +32,22 @@ inputs:
     description: 'keyword contained in triggered workflow title, with this input, it can trace the triggered workflow'
     default: ''
     required: false
+  trackTriggertedWorkflowMaxRetries:
+    description: 'max retries to track triggerted workflow status, default to 3'
+    default: 3
+    required: false
+  trackTriggertedWorkflowRetryInterval:
+    description: 'interval to retry to track triggerted workflow status, default to 5 seconds'
+    default: 5
+    required: false
+  trackTriggertedWorkflowPageSize:
+    description: 'page size to track triggerted workflow status, default to 5'
+    default: 5
+    required: false
+
+outputs:
+  triggeredWorkflowId:
+    description: 'workflow id of triggered workflow'
 runs:
-  using: 'node16'
+  using: 'node18'
   main: 'dist/index.js'

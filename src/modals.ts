@@ -5,7 +5,10 @@ export enum INPUTS {
   eventType = 'eventType',
   clientPayload = 'clientPayload',
   targetWorkflowId = 'targetWorkflowId',
-  triggeredWorkflowTitleKeyword = 'triggeredWorkflowTitleKeyword'
+  triggeredWorkflowTitleKeyword = 'triggeredWorkflowTitleKeyword',
+  trackTriggertedWorkflowMaxRetries = 'trackTriggertedWorkflowMaxRetries',
+  trackTriggertedWorkflowRetryInterval = 'trackTriggertedWorkflowRetryInterval',
+  trackTriggertedWorkflowPageSize = 'trackTriggertedWorkflowPageSzie'
 }
 
 export interface IInputs {
@@ -16,4 +19,7 @@ export interface IInputs {
   clientPayload: string;
   targetWorkflowId: string;
   triggeredWorkflowTitleKeyword: string;
+  trackTriggertedWorkflowMaxRetries: number;
+  trackTriggertedWorkflowRetryInterval: number;
+  trackTriggertedWorkflowPageSize: number;
 }

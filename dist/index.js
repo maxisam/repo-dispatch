@@ -33,12 +33,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOctokit = exports.getOwnerRepo = exports.getInputs = void 0;
+exports.getGithubClient = exports.getOwnerRepo = exports.getInputs = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const rest_1 = __nccwpck_require__(5375);
 const node_fetch_1 = __importDefault(__nccwpck_require__(467));
 const util_1 = __nccwpck_require__(3837);
 const modals_1 = __nccwpck_require__(4062);
+const utils_1 = __nccwpck_require__(918);
 function getInputs() {
     const inputs = {
         authToken: core.getInput(modals_1.INPUTS.authToken),
@@ -47,7 +48,10 @@ function getInputs() {
         eventType: core.getInput(modals_1.INPUTS.eventType),
         clientPayload: core.getInput(modals_1.INPUTS.clientPayload),
         targetWorkflowId: core.getInput(modals_1.INPUTS.targetWorkflowId),
-        triggeredWorkflowTitleKeyword: core.getInput(modals_1.INPUTS.triggeredWorkflowTitleKeyword)
+        triggeredWorkflowTitleKeyword: core.getInput(modals_1.INPUTS.triggeredWorkflowTitleKeyword),
+        trackTriggertedWorkflowMaxRetries: (0, utils_1.getNumberInput)(modals_1.INPUTS.trackTriggertedWorkflowMaxRetries),
+        trackTriggertedWorkflowRetryInterval: (0, utils_1.getNumberInput)(modals_1.INPUTS.trackTriggertedWorkflowRetryInterval),
+        trackTriggertedWorkflowPageSize: (0, utils_1.getNumberInput)(modals_1.INPUTS.trackTriggertedWorkflowPageSize)
     };
     core.debug(`Inputs: ${(0, util_1.inspect)(inputs)}`);
     return inputs;
@@ -61,7 +65,7 @@ function getOwnerRepo(owner, repository) {
     return [owner, repository];
 }
 exports.getOwnerRepo = getOwnerRepo;
-function getOctokit(authToken, userAgent = 'github-action') {
+function getGithubClient(authToken, userAgent = 'github-action') {
     try {
         const octokit = new rest_1.Octokit({
             auth: authToken,
@@ -87,7 +91,7 @@ function getOctokit(authToken, userAgent = 'github-action') {
         throw error;
     }
 }
-exports.getOctokit = getOctokit;
+exports.getGithubClient = getGithubClient;
 
 
 /***/ }),
@@ -134,15 +138,28 @@ const core = __importStar(__nccwpck_require__(2186));
 const util_1 = __nccwpck_require__(3837);
 const common_1 = __nccwpck_require__(6979);
 const utils_1 = __nccwpck_require__(918);
+function dispatch(repo, inputs, githubClient) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const request = {
+            owner: inputs.owner,
+            repo,
+            event_type: inputs.eventType,
+            client_payload: (0, utils_1.parseClientPayload)(inputs.clientPayload)
+        };
+        core.debug(`dispatch event request: ${(0, util_1.inspect)(request)}`);
+        core.notice(`Dispatching event: ${inputs.eventType}`, { title: '🚀Dispatching event' });
+        yield githubClient.rest.repos.createDispatchEvent(request);
+    });
+}
 function showNotice(githubClient, repo, inputs) {
     return __awaiter(this, void 0, void 0, function* () {
-        for (let i = 0; i <= 3; i++) {
-            yield new Promise(resolve => setTimeout(resolve, 5000));
+        for (let i = 0; i < inputs.trackTriggertedWorkflowMaxRetries; i++) {
+            yield new Promise(resolve => setTimeout(resolve, inputs.trackTriggertedWorkflowRetryInterval * 1000));
             const response = yield githubClient.rest.actions.listWorkflowRuns({
                 owner: inputs.owner,
                 repo,
                 workflow_id: inputs.targetWorkflowId,
-                per_page: 5
+                per_page: inputs.trackTriggertedWorkflowPageSize
             });
             const workflow = response.data.workflow_runs.find(w => w.event === 'repository_dispatch' && w.display_title.includes(inputs.triggeredWorkflowTitleKeyword));
             if (workflow) {
@@ -156,18 +173,10 @@ function showNotice(githubClient, repo, inputs) {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const inputs = (0, common_1.getInputs)();
-        const [owner, repo] = (0, common_1.getOwnerRepo)(inputs.owner, inputs.repository);
-        const githubClient = (0, common_1.getOctokit)(inputs.authToken, 'github-action-repo-dispatch');
+        const [, repo] = (0, common_1.getOwnerRepo)(inputs.owner, inputs.repository);
+        const githubClient = (0, common_1.getGithubClient)(inputs.authToken, 'github-action-repo-dispatch');
         try {
-            const request = {
-                owner,
-                repo,
-                event_type: inputs.eventType,
-                client_payload: (0, utils_1.parseClientPayload)(inputs.clientPayload)
-            };
-            core.debug(`dispatch event request: ${(0, util_1.inspect)(request)}`);
-            core.notice(`Dispatching event: ${inputs.eventType}`, { title: '🚀Dispatching event' });
-            yield githubClient.rest.repos.createDispatchEvent(request);
+            yield dispatch(repo, inputs, githubClient);
             if (inputs.triggeredWorkflowTitleKeyword && inputs.targetWorkflowId) {
                 yield showNotice(githubClient, repo, inputs);
             }
@@ -201,6 +210,9 @@ var INPUTS;
     INPUTS["clientPayload"] = "clientPayload";
     INPUTS["targetWorkflowId"] = "targetWorkflowId";
     INPUTS["triggeredWorkflowTitleKeyword"] = "triggeredWorkflowTitleKeyword";
+    INPUTS["trackTriggertedWorkflowMaxRetries"] = "trackTriggertedWorkflowMaxRetries";
+    INPUTS["trackTriggertedWorkflowRetryInterval"] = "trackTriggertedWorkflowRetryInterval";
+    INPUTS["trackTriggertedWorkflowPageSize"] = "trackTriggertedWorkflowPageSzie";
 })(INPUTS = exports.INPUTS || (exports.INPUTS = {}));
 
 
@@ -235,22 +247,32 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.parseClientPayload = void 0;
+exports.getNumberInput = exports.parseClientPayload = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const jsYaml = __importStar(__nccwpck_require__(1917));
 function parseClientPayload(clientPayloadString) {
-    let clientPayload = {};
     try {
-        clientPayload = jsYaml.load(clientPayloadString, { json: true });
+        const clientPayload = jsYaml.load(clientPayloadString, { json: true });
+        return clientPayload;
     }
     catch (error) {
         if (error instanceof jsYaml.YAMLException) {
             core.setFailed(`Error parsing client payload:\n${error.message}`);
         }
+        throw error;
     }
-    return clientPayload;
 }
 exports.parseClientPayload = parseClientPayload;
+function getNumberInput(input) {
+    const value = core.getInput(input);
+    const numberValue = parseInt(value);
+    if (isNaN(numberValue)) {
+        core.setFailed(`Input ${input} is not a number`);
+        throw new Error(`Input ${input} is not a number`);
+    }
+    return numberValue;
+}
+exports.getNumberInput = getNumberInput;
 
 
 /***/ }),

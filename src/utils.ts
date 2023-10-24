@@ -5,13 +5,23 @@ export interface IClinetPayload {
 }
 
 export function parseClientPayload(clientPayloadString: string): IClinetPayload {
-  let clientPayload: IClinetPayload = {};
   try {
-    clientPayload = jsYaml.load(clientPayloadString, {json: true}) as IClinetPayload;
+    const clientPayload = jsYaml.load(clientPayloadString, {json: true}) as IClinetPayload;
+    return clientPayload;
   } catch (error) {
     if (error instanceof jsYaml.YAMLException) {
       core.setFailed(`Error parsing client payload:\n${error.message}`);
     }
+    throw error;
   }
-  return clientPayload;
+}
+
+export function getNumberInput(input: string): number {
+  const value = core.getInput(input);
+  const numberValue = parseInt(value);
+  if (isNaN(numberValue)) {
+    core.setFailed(`Input ${input} is not a number`);
+    throw new Error(`Input ${input} is not a number`);
+  }
+  return numberValue;
 }

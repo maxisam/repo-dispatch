@@ -3,6 +3,7 @@ import {Octokit} from '@octokit/rest';
 import fetch from 'node-fetch';
 import {inspect} from 'util';
 import {IInputs, INPUTS} from './modals';
+import {getNumberInput} from './utils';
 
 export function getInputs(): IInputs {
   const inputs: IInputs = {
@@ -12,7 +13,10 @@ export function getInputs(): IInputs {
     eventType: core.getInput(INPUTS.eventType),
     clientPayload: core.getInput(INPUTS.clientPayload),
     targetWorkflowId: core.getInput(INPUTS.targetWorkflowId),
-    triggeredWorkflowTitleKeyword: core.getInput(INPUTS.triggeredWorkflowTitleKeyword)
+    triggeredWorkflowTitleKeyword: core.getInput(INPUTS.triggeredWorkflowTitleKeyword),
+    trackTriggertedWorkflowMaxRetries: getNumberInput(INPUTS.trackTriggertedWorkflowMaxRetries),
+    trackTriggertedWorkflowRetryInterval: getNumberInput(INPUTS.trackTriggertedWorkflowRetryInterval),
+    trackTriggertedWorkflowPageSize: getNumberInput(INPUTS.trackTriggertedWorkflowPageSize)
   };
   core.debug(`Inputs: ${inspect(inputs)}`);
   return inputs;
@@ -26,7 +30,7 @@ export function getOwnerRepo(owner: string, repository: string): [string, string
   return [owner, repository];
 }
 
-export function getOctokit(authToken: string, userAgent = 'github-action'): Octokit {
+export function getGithubClient(authToken: string, userAgent = 'github-action'): Octokit {
   try {
     const octokit = new Octokit({
       auth: authToken,
