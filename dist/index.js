@@ -208,7 +208,7 @@ var INPUTS;
     INPUTS["triggeredWorkflowTitleKeyword"] = "triggeredWorkflowTitleKeyword";
     INPUTS["trackTriggertedWorkflowMaxRetries"] = "trackTriggertedWorkflowMaxRetries";
     INPUTS["trackTriggertedWorkflowRetryInterval"] = "trackTriggertedWorkflowRetryInterval";
-    INPUTS["trackTriggertedWorkflowPageSize"] = "trackTriggertedWorkflowPageSzie";
+    INPUTS["trackTriggertedWorkflowPageSize"] = "trackTriggertedWorkflowPageSize";
 })(INPUTS = exports.INPUTS || (exports.INPUTS = {}));
 
 

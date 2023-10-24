@@ -8,7 +8,7 @@ export enum INPUTS {
   triggeredWorkflowTitleKeyword = 'triggeredWorkflowTitleKeyword',
   trackTriggertedWorkflowMaxRetries = 'trackTriggertedWorkflowMaxRetries',
   trackTriggertedWorkflowRetryInterval = 'trackTriggertedWorkflowRetryInterval',
-  trackTriggertedWorkflowPageSize = 'trackTriggertedWorkflowPageSzie'
+  trackTriggertedWorkflowPageSize = 'trackTriggertedWorkflowPageSize'
 }
 
 export interface IInputs {
