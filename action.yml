@@ -49,5 +49,5 @@ outputs:
   triggeredWorkflowId:
     description: 'workflow id of triggered workflow'
 runs:
-  using: 'node18'
+  using: 'node20'
   main: 'dist/index.js'

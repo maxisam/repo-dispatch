@@ -1,6 +1,5 @@
 import * as core from '@actions/core';
 import {Octokit} from '@octokit/rest';
-import fetch from 'node-fetch';
 import {inspect} from 'util';
 import {IInputs, INPUTS} from './modals';
 import {getNumberInput} from './utils';
