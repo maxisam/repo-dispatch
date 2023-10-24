@@ -68,3 +68,6 @@ jobs:
               - test 1
               - test 2
             subject: 💥Title
+            test: |
+              something
+              something else

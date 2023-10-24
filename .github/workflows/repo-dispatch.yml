@@ -1,4 +1,4 @@
-name: REPO DISPATCH
+name: 💥REPO DISPATCH
 run-name: '${{ github.event.client_payload.subject }}'
 
 on:
