@@ -1,11 +1,12 @@
 name: REPO DISPATCH
+run-name: '${{ github.event.client_payload.subject }}'
 
 on:
   repository_dispatch:
     types: [test-repo-dispatch]
 
 jobs:
-  repo-dispatch: 
+  repo-dispatch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,4 +23,3 @@ jobs:
             --label ci-test \
             --title "${{ github.event.client_payload.subject }}")
           gh issue close $ISSUE
-
