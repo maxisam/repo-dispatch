@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import {Octokit} from '@octokit/rest';
+import fetch from 'node-fetch';
 import {inspect} from 'util';
 import {IInputs, INPUTS} from './modals';
 
@@ -9,7 +10,9 @@ export function getInputs(): IInputs {
     owner: core.getInput(INPUTS.owner),
     repository: core.getInput(INPUTS.repository),
     eventType: core.getInput(INPUTS.eventType),
-    clientPayload: core.getInput(INPUTS.clientPayload)
+    clientPayload: core.getInput(INPUTS.clientPayload),
+    targetWorkflowId: core.getInput(INPUTS.targetWorkflowId),
+    triggeredWorkflowTitleKeyword: core.getInput(INPUTS.triggeredWorkflowTitleKeyword)
   };
   core.debug(`Inputs: ${inspect(inputs)}`);
   return inputs;
@@ -23,11 +26,9 @@ export function getOwnerRepo(owner: string, repository: string): [string, string
   return [owner, repository];
 }
 
-export function getOctokit(authToken: string, userAgent = 'github-action'): Octokit | null {
-  let octokit: Octokit | null = null;
-
+export function getOctokit(authToken: string, userAgent = 'github-action'): Octokit {
   try {
-    octokit = new Octokit({
+    const octokit = new Octokit({
       auth: authToken,
       userAgent,
       baseUrl: 'https://api.github.com',
@@ -39,14 +40,14 @@ export function getOctokit(authToken: string, userAgent = 'github-action'): Octo
       },
       request: {
         agent: undefined,
-        fetch: undefined,
-        timeout: 0
+        fetch
       }
     });
+    return octokit;
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(`Error creating octokit:\n${error.message}`);
     }
+    throw error;
   }
-  return octokit;
 }

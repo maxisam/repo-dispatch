@@ -3,7 +3,9 @@ export enum INPUTS {
   owner = 'owner',
   repository = 'repository',
   eventType = 'eventType',
-  clientPayload = 'clientPayload'
+  clientPayload = 'clientPayload',
+  targetWorkflowId = 'targetWorkflowId',
+  triggeredWorkflowTitleKeyword = 'triggeredWorkflowTitleKeyword'
 }
 
 export interface IInputs {
@@ -12,4 +14,6 @@ export interface IInputs {
   repository: string;
   eventType: string;
   clientPayload: string;
+  targetWorkflowId: string;
+  triggeredWorkflowTitleKeyword: string;
 }

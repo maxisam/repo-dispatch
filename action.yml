@@ -7,7 +7,7 @@ branding:
 inputs:
   authToken:
     description: 'Use your own token if you need to trigger other workflows'
-    required: true  
+    required: true
   owner:
     description: 'Repostory owner, defaults to context github.repository_owner if omited'
     default: ${{ github.repository_owner }}
@@ -20,8 +20,16 @@ inputs:
     description: 'eventType of repo dispatch'
     default: 'repo-dispatch'
     required: false
-  clientPayload: 
+  clientPayload:
     description: 'clientPayload in yaml format'
+    default: ''
+    required: false
+  targetWorkflowId:
+    description: 'workflow id/ yaml file to trigger, with this input, it can trace the triggered workflow'
+    default: ''
+    required: false
+  triggeredWorkflowTitleKeyword:
+    description: 'keyword contained in triggered workflow title, with this input, it can trace the triggered workflow'
     default: ''
     required: false
 runs:
