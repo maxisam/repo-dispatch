@@ -33,7 +33,7 @@
   "devDependencies": {
     "@octokit/types": "^12.1.1",
     "@types/js-yaml": "^4.0.8",
-    "@types/node": "^20.8.8",
+    "@types/node": "^20.8.9",
     "@typescript-eslint/parser": "^6.9.0",
     "@vercel/ncc": "^0.38.1",
     "@types/node-fetch": "2.6.7",
