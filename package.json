@@ -28,7 +28,7 @@
     "@actions/github": "^6.0.0",
     "@octokit/rest": "^20.0.2",
     "js-yaml": "^4.1.0",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@octokit/types": "^12.1.1",
